@@ -1,4 +1,6 @@
 // Add theme UI
+
+let locations = ['top-nav', 'left-nav', 'right-nav', 'footer', 'background'];
 ColorWheel.extend('theme', function (colorWheel) {
   var theme = colorWheel.container.append('div').attr('class', colorWheel.cx('theme'));
 
@@ -36,6 +38,20 @@ ColorWheel.extend('theme', function (colorWheel) {
         this.select();
       });
 
+    // Add location of color
+    newSwatches.append('div')
+    .attr('class', colorWheel.cx('theme-location'))
+    .text(function(d, i){
+      var htmlElement = d3.select(colorWheel.selector(locations[i]));
+      
+      htmlElement = colorWheel.container.append('div').attr({
+        'id': locations[i],
+        'class': colorWheel.cx(locations[i])
+      });
+
+      return locations[i];
+    });
+
     swatches.exit().remove();
   });
 
@@ -49,6 +65,12 @@ ColorWheel.extend('theme', function (colorWheel) {
           this.style.order = this.style.webkitOrder = ColorWheel.markerDistance(i);
           break;
       }
+    });
+
+    colorWheel.container.selectAll(colorWheel.selector('theme-location')).each(function (d, i) {
+      var c = tinycolor({h: d.color.h, s: d.color.s, v: d.color.v});
+      d3.select(colorWheel.selector(locations[i]))
+      .style('background-color', c.toHexString());
     });
 
     colorWheel.container.selectAll(colorWheel.selector('theme-color')).each(function (d) {
